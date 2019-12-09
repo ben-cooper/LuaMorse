@@ -121,5 +121,5 @@ if arg[1] == "-e" and #arg == 2 then
 elseif arg[1] == "-d" and #arg == 2 then
 	print(translate_from_morse(arg[2]))
 else
-	print("usage: " .. arg[0] .. "  <-e | -f> message")
+	print("usage: " .. arg[0] .. "  <-e | -d> message")
 end
