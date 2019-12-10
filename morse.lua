@@ -40,6 +40,15 @@ l_code["--..."] = '7'
 l_code["---.."] = '8'
 l_code["----."] = '9'
 
+-- sound files
+sounds = {}
+
+sounds['.'] = "Sounds/dot.wav"
+sounds['-'] = "Sounds/dash.wav"
+sounds['s'] = "Sounds/shortpause.wav"
+sounds[' '] = "Sounds/mediumpause.wav"
+sounds['/'] = "Sounds/longpause.wav"
+
 -- adding inverse of table
 r_code = {}
 for k, v in pairs(l_code) do
@@ -85,12 +94,14 @@ function translate_to_morse(input)
 			end
 		end
 		
+		-- removing last space
+		result = string.sub(result, 1, #result - 1)
 		-- adding a slash to distinguish separate words
 		result = result .. "/"
 	end
 	
 	-- removing last spaces
-	return string.sub(result, 1, #result - 2)
+	return string.sub(result, 1, #result - 1)
 end
 
 -- takes a morse code string and returns a new string in alpha-numeric
@@ -115,11 +126,38 @@ function translate_from_morse(str)
 	return string.sub(result, 1, #result - 1)
 end
 
+function output_morse(str)
+	-- building sox command
+	local command = "sox"
+	
+	for i= 1, #str do
+		chr = string.sub(str, i, i)
+		command = command .. " " .. sounds[chr]
+		
+		-- add pause between non-space characters
+		if chr ~= ' ' and chr ~= '/' then
+			command = command .. " " .. sounds['s']
+		end
+	end
+	
+	command = command .. " output.wav"
+	os.execute(command)
+end
+
 -- main
-if arg[1] == "-e" and #arg == 2 then
-	print(translate_to_morse(arg[2]))
-elseif arg[1] == "-d" and #arg == 2 then
+if arg[1] == "-e" then
+	morse = translate_to_morse(arg[2])
+	print(morse)
+	
+	if arg[3] == "-o" then
+		output_morse(morse)
+	end
+elseif arg[1] == "-d" then
 	print(translate_from_morse(arg[2]))
+	
+	if arg[3] == "-o" then
+		output_morse(arg[2])
+	end
 else
-	print("usage: " .. arg[0] .. "  <-e | -d> message")
+	print("usage: " .. arg[0] .. "  <-e | -d> message [-o]")
 end
