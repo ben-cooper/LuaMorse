@@ -4,7 +4,7 @@ Lua Script to Translate to and from Morse Code.
 ## Usage
 
 -e for encoding to morse<br>
--d for decoding from morse
+-d for decoding from morse<br>
 -o for output to file (filename: output.wav)
 
 ```
